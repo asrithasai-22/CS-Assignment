@@ -1,0 +1,66 @@
+OpenSSL RSA Key Generation Guide
+Windows OpenSSL commands to generate RSA key pairs and export in PEM format.
+
+Prerequisites
+Verify OpenSSL installation:
+
+text
+"C:\Program Files\OpenSSL-Win64\bin\openssl.exe" version
+Generate RSA Keys
+1. Private Key (2048-bit)
+text
+"C:\Program Files\OpenSSL-Win64\bin\openssl.exe" genrsa -out private_key.pem 2048
+2. Public Key from Private
+text
+"C:\Program Files\OpenSSL-Win64\bin\openssl.exe" rsa -in private_key.pem -pubout -out public_key.pem
+View Keys
+text
+type private_key.pem
+type public_key.pem
+What is PEM Format?
+PEM = Privacy Enhanced Mail (text-based format)
+
+Used for:
+Public keys
+Private keys
+SSL/TLS certificates
+
+PEM Structure:
+text
+Header
+Base64 encoded data
+Footer
+
+Private Key Example:
+
+text
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAx7J8...
+...
+-----END RSA PRIVATE KEY-----
+Public Key Example:
+
+text
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0B...
+...
+-----END PUBLIC KEY-----
+
+Quick Commands Summary
+bash
+# Check version
+"C:\Program Files\OpenSSL-Win64\bin\openssl.exe" version
+
+# Generate private key
+"C:\Program Files\OpenSSL-Win64\bin\openssl.exe" genrsa -out private_key.pem 2048
+
+# Extract public key
+"C:\Program Files\OpenSSL-Win64\bin\openssl.exe" rsa -in private_key.pem -pubout -out public_key.pem
+
+# View files
+type private_key.pem
+type public_key.pem
+Files Created
+private_key.pem - Keep secret!
+
+public_key.pem - Safe to share
