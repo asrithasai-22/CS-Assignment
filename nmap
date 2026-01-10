@@ -1,0 +1,52 @@
+Scan target for open ports and identify services running on them.
+
+Basic Nmap Scan
+bash
+# Scan legal test target 
+nmap scanme.nmap.org
+
+Example Scan Results
+text
+PORT    STATE SERVICE
+22/tcp  open  ssh     # Secure Shell (remote login)
+80/tcp  open  http    # Web server (HTTP)
+9929/tcp open  nping-echo # Nmap testing service
+
+Common Open Ports Explained
+Port	Service	Purpose
+22/tcp	SSH	Secure remote login/administration
+80/tcp	HTTP	Web server (unencrypted websites)
+443/tcp	HTTPS	Secure web server (SSL/TLS)
+21/tcp	FTP	File transfer protocol
+3306/tcp	MySQL	Database server
+Scan Commands
+bash
+# Quick scan (top 1000 ports)
+nmap scanme.nmap.org
+
+# Specific ports
+nmap -p 22,80,443 scanme.nmap.org
+
+# All ports (65k - takes time!)
+nmap -p- scanme.nmap.org
+
+# Service version detection
+nmap -sV scanme.nmap.org
+Output Legend
+text
+PORT     STATE  SERVICE
+22/tcp   open   ssh      ✅ Service listening
+80/tcp   closed http     ❌ No service
+111/tcp  filtered rpcbind ❓ Firewall blocking
+Legal Test Target
+Use only: scanme.nmap.org (Nmap official test server)
+
+bash
+nmap scanme.nmap.org
+# Always shows ports 22, 80, 9929 open
+
+-sV = Detect service versions
+-p- = Scan all 65,535 ports
+-F = Fast scan (top 100 ports)
+
+-T4 = Faster timing
