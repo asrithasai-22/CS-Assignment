@@ -1,0 +1,55 @@
+OpenVPN Setup & IP Verification (Linux)
+Connect to VPNBook France server and verify IP change with curl ifconfig.me.
+
+Check Original IP
+bash
+curl ifconfig.me
+# Note your real IP address
+Install OpenVPN
+bash
+sudo apt update
+sudo apt install openvpn -y
+Download & Connect VPN
+bash
+cd Downloads
+ls
+# vpnbook-openvpn-fr200
+
+cd vpnbook-openvpn-fr200
+ls
+# vpnbook-fr200-tcp80.ovpn
+
+sudo openvpn vpnbook-fr200-tcp80.ovpn
+Credentials:
+
+text
+Username: vpnbook
+Password: [Get from vpnbook.com via Firefox]
+Verify VPN Connection
+Open NEW terminal (don't close VPN):
+
+bash
+curl ifconfig.me
+# Should show France IP now!
+Quick Commands Summary
+bash
+# Before VPN
+curl ifconfig.me                    # Real IP
+
+# Install
+sudo apt update && sudo apt install openvpn -y
+
+# Connect (VPNBook France TCP80)
+cd ~/Downloads/vpnbook-openvpn-fr200
+sudo openvpn vpnbook-fr200-tcp80.ovpn  # vpnbook / [password]
+
+# After VPN (new terminal)
+curl ifconfig.me                    # France IP ✅
+Expected Results
+Step	Command	Result
+Before	curl ifconfig.me	Your real IP
+After VPN	curl ifconfig.me	French IP (different!)
+Disconnect VPN
+bash
+# Press Ctrl+C in VPN terminal
+# Or kill process: pkill openvpn
