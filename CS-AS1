@@ -1,20 +1,18 @@
-# Caesar Cipher Encryption & Decryption
+# Caesar Cipher Encryption and Decryption
 
-## Problem Statement
-Encrypt the message "HELLO" using a Caesar cipher with a shift of 4.  
-Decrypt the ciphertext "Jg qh iwtg" using the reverse shift.
+## Problem
+Encrypt "HELLO" with shift 4  
+Decrypt "Jg qh iwtg" with reverse shift
 
-## Python Code
+## Code
 
 def caesar(text, shift):
     result = ""
-
     for ch in text:
         if ch.isalpha():
             result += chr(ord(ch) + shift)
         else:
             result += ch
-
     return result
 
 choice = input("Enter choice (encrypt / decrypt): ")
@@ -23,17 +21,7 @@ shift = int(input("Enter shift value: "))
 
 if choice == "encrypt":
     print("Encrypted text:", caesar(text, shift))
-
 elif choice == "decrypt":
     print("Decrypted text:", caesar(text, -shift))
-
 else:
-    print("Invalid choice! Enter encrypt or decrypt.")
-
-## Example
-
-Encryption:
-HELLO → LIPPS (Shift 4)
-
-Decryption:
-Jg qh iwtg → He of gurg
+    print("Invalid choice!")
