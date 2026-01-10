@@ -1,0 +1,142 @@
+IoT Devices Wi-Fi + Wireshark Analysis
+Complete guide - Connect 2 IoT devices (Raspberry Pi + ESP32) to Wi-Fi, capture traffic, identify unsecured communications.
+
+Prerequisites
+Raspberry Pi (any model with Wi-Fi)
+
+ESP32 development board
+
+Wi-Fi network (SSID: MyNetwork, Password: mypassword)
+
+Laptop with Wireshark installed
+
+Step 1: Raspberry Pi Wi-Fi Connection
+Boot & Configure Wi-Fi
+bash
+# Boot Raspberry Pi, login (pi/raspberry)
+
+# Method 1: wpa_supplicant (headless)
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+Add network:
+
+bash
+network={
+    ssid="MyNetwork"
+    psk="mypassword"
+}
+Reboot:
+
+bash
+sudo reboot
+Verify Connection
+bash
+# Check IP
+ip addr show wlan0
+
+# Test internet
+ping 8.8.8.8
+Step 2: ESP32 Wi-Fi Connection (Arduino IDE)
+Install Arduino IDE + ESP32 Board
+Arduino IDE → File → Preferences
+
+Additional Boards: https://dl.espressif.com/dl/package_esp32_index.json
+
+Tools → Board → Boards Manager → Search "ESP32" → Install
+
+Wi-Fi Sketch
+cpp
+#include "WiFi.h"
+
+const char* ssid = "MyNetwork";
+const char* password = "mypassword";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println("\nConnected!");
+  Serial.print("IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  // Send HTTP request every 10s (UNSECURED!)
+  HTTPClient http;
+  http.begin("http://api.ipify.org");
+  int httpCode = http.GET();
+  
+  if (httpCode > 0) {
+    Serial.println("IP request sent (plain HTTP!)");
+  }
+  http.end();
+  delay(10000);
+}
+Upload → Open Serial Monitor → Connected!
+
+Step 3: Generate Traffic Between Devices
+Raspberry Pi → Broadcast Messages
+bash
+# Pi sends unsecured UDP to ESP32
+while true; do
+  echo "Pi -> ESP32: $(date)" | nc -u 192.168.1.255 12345
+  sleep 5
+done
+ESP32 → Respond (modify sketch)
+cpp
+// Add to loop()
+WiFiUDP udp;
+udp.beginPacket("192.168.1.100", 12345);  // Pi IP
+udp.print("ESP32 -> Pi: Hello!");
+udp.endPacket();
+Step 4: Wireshark Setup & Capture
+Put Wi-Fi Interface in Monitor Mode
+bash
+# Ubuntu/Debian
+sudo apt install aircrack-ng
+sudo airmon-ng start wlan0
+
+# Check interface name (wlan0mon)
+iwconfig
+Start Wireshark Capture
+bash
+# Wireshark GUI
+sudo wireshark
+
+# Select: wlan0mon → Start capture
+# Filter: http or udp.port == 12345
+CLI Alternative (tshark)
+bash
+sudo tshark -i wlan0mon -f "not broadcast" -Y "http or udp.port==12345"
+Step 5: Identify Unsecured Communications
+HTTP Traffic (Plaintext!)
+text
+GET / HTTP/1.1
+Host: api.ipify.org
+User-Agent: ESP32
+Risk: IP address exposed!
+
+UDP Broadcast (No Encryption)
+text
+Pi -> ESP32: Mon Jan 10 20:45:12 IST 2026
+Risk: Timestamps/tokens visible!
+
+Step 6: Security Analysis Report
+Protocol	Source	Destination	Security	Risk
+HTTP	ESP32	api.ipify.org	❌ Plaintext	Device fingerprint
+UDP	Pi	ESP32 (broadcast)	❌ No encryption	Message interception
+ARP	Both	Network	❌ Plaintext	MAC/IP mapping
+Verification Commands
+bash
+# Device IPs
+arp -a
+
+# Pi Wi-Fi status
+iwconfig wlan0
+
+# ESP32 Serial Monitor: IP assigned
