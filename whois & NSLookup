@@ -1,0 +1,66 @@
+Whois & NSLookup Domain Analysis
+Gather domain registration and DNS information using whois and nslookup.
+
+Whois Query
+bash
+whois example.com
+Sample Output:
+
+text
+Domain Name: EXAMPLE.COM
+Registrar: IANA
+Creation Date: 1995-08-14
+Name Server: a.iana-servers.net
+Name Server: b.iana-servers.net
+Status: client delete prohibited
+NSLookup Basic Query
+bash
+nslookup example.com
+Sample Output:
+
+text
+Name:    example.com
+Address: 93.184.216.34
+Detailed DNS Lookup
+bash
+nslookup
+> set type=NS
+> example.com
+Name Servers Output:
+
+text
+example.com  nameserver = a.iana-servers.net
+example.com  nameserver = b.iana-servers.net
+> exit
+Quick Commands Summary
+bash
+# Registration info
+whois example.com
+
+# IP address lookup
+nslookup example.com
+
+# Detailed DNS (interactive)
+nslookup
+set type=NS
+example.com
+exit
+Results Breakdown
+Command	Information Retrieved	Example Data
+whois	Registration, Registrar, Creation date	IANA, 1995-08-14
+nslookup	A Record (IP)	93.184.216.34
+nslookup NS	Name Servers	a.iana-servers.net
+Common Query Types
+bash
+nslookup
+> set type=A     # IPv4 addresses
+> set type=AAAA  # IPv6 addresses  
+> set type=MX    # Mail servers
+> set type=TXT   # Text records
+> example.com
+> exit
+Test Your Own Domain
+bash
+# Replace with any domain
+whois google.com
+nslookup google.com
