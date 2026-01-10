@@ -1,0 +1,54 @@
+SSH Failed Login Analysis Report
+Identify brute-force attacks from /var/log/auth.log using journalctl.
+
+Basic Failed Login Search
+bash
+# SSH service logs
+sudo journalctl -u ssh
+
+# Failed password attempts
+sudo journalctl _COMM=sshd | grep "Failed password"
+
+# Invalid user attempts
+sudo journalctl _COMM=sshd | grep "Invalid user"
+Extract Timestamps + IPs
+bash
+# Timestamp + IP (columns 1-3, 11)
+sudo journalctl _COMM=sshd | grep "Failed password" | awk '{print $1,$2,$3,$11}'
+
+# IPs only (regex match)
+sudo journalctl _COMM=sshd | grep "Failed password" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}'
+Brute Force Detection
+bash
+# Count repeated IPs (most attacks first)
+sudo journalctl _COMM=sshd | grep "Failed password" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' | sort | uniq -c | sort -nr
+Sample Output:
+
+text
+   47 192.168.1.100    ← Heavy brute force!
+    5 203.0.113.42
+    2 198.51.100.77
+Complete Analysis Pipeline
+bash
+# Full security report
+echo "=== FAILED LOGINS ==="
+sudo journalctl _COMM=sshd | grep "Failed password" | tail -10
+
+echo -e "\n=== BRUTE FORCE IPS ==="
+sudo journalctl _COMM=sshd | grep "Failed password" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' | sort | uniq -c | sort -nr | head -5
+
+echo -e "\n=== INVALID USERS ==="
+sudo journalctl _COMM=sshd | grep "Invalid user" | tail -5
+Sample Suspicious Activity Report
+text
+Timestamp           IP              Attempts  Threat
+Jan 10 20:30:15     192.168.1.100   47        HIGH - Brute force
+Jan 10 20:28:22     203.0.113.42    5         MEDIUM
+Jan 10 20:15:10     198.51.100.77   2         LOW
+
+Invalid users: root, admin, test, mysql
+Actionable Insights
+IP Count	Action
+>20	Block immediately (iptables -A INPUT -s IP -j DROP)
+5-20	Monitor (add to watchlist)
+Invalid users	SSH config hardening needed
