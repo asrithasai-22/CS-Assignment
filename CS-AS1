@@ -1,16 +1,14 @@
 Caesar Cipher Implementation
-A simple Python program to encrypt and decrypt messages using the Caesar cipher algorithm. Supports both encryption (positive shift) and decryption (negative shift).
+        A simple Python program to encrypt and decrypt messages using the Caesar cipher algorithm. Supports both encryption (positive shift) and decryption (negative shift).
 
-Features
+Features:
 Encrypts alphabetic characters by shifting letters forward
-
 Decrypts by shifting letters backward
-
 Preserves non-alphabetic characters (spaces, punctuation)
-
 Interactive command-line interface
 
-Example Usage
+Example Usage:
+
 Encrypt "HELLO" with shift 4
 text
 Enter choice (encrypt / decrypt): encrypt
@@ -23,7 +21,8 @@ Enter choice (encrypt / decrypt): decrypt
 Enter text: Jg qh iwtg
 Enter shift value: 2
 Decrypted text: He of srpe
-Code
+
+Code:
 python
 def caesar(text, shift):
     result = ""
@@ -46,21 +45,13 @@ elif choice == "decrypt":
     print("Decrypted text:", caesar(text, -shift))
 else:
     print("Invalid choice! Enter encrypt or decrypt.")
-How It Works
+
+
+How It Works:
 Encryption: Each letter shifts forward by shift positions in the alphabet
-
 Decryption: Each letter shifts backward by shift positions
-
 Non-alphabetic characters remain unchanged
 
-Note: Current implementation doesn't handle wrap-around (A→Z cycling)
-
-Improvements Needed
-Add alphabet wrap-around support (mod 26)
-
-Case sensitivity handling
-
-Input validation for shift values
 
 Installation
 Copy the code into a file named caesar_cipher.py
