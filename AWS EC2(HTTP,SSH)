@@ -1,0 +1,113 @@
+AWS EC2 Complete Setup - HTTP + SSH Only
+Step-by-step guide from account creation to locked-down security group (ports 80+22 only).
+
+Step 1: AWS Account & Console
+Login: console.aws.amazon.com
+
+Region: Choose closest (ex: us-east-1)
+
+Services → EC2 → Launch Instance
+
+Step 2: Choose & Configure Instance
+text
+Instance Details:
+├── AMI: Amazon Linux 2 (Free Tier)
+├── Instance Type: t2.micro (Free Tier)
+├── Key Pair: Create new → "my-key.pem" → Download!
+├── Network: Use default VPC
+└── Storage: 8GB (default)
+Click "Launch Instance"
+
+Step 3: Security Group Configuration (CRITICAL)
+Network Settings → Edit → Add Inbound Rules:
+
+Type	Protocol	Port Range	Source	Description
+HTTP	TCP	80	0.0.0.0/0	Web Access
+SSH	TCP	22	0.0.0.0/0	Admin Access
+text
+❌ DELETE all other rules (HTTPS, RDP, Custom TCP!)
+✅ ONLY 80 + 22 allowed
+Step 4: Connect to Instance
+bash
+# Set permissions (Mac/Linux)
+chmod 400 my-key.pem
+
+# SSH connect
+ssh -i my-key.pem ec2-user@YOUR-PUBLIC-IP
+Step 5: Install Web Server
+bash
+# Update system
+sudo yum update -y
+
+# Install Apache
+sudo yum install httpd -y
+
+# Start & enable
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+# Test locally
+curl localhost
+Step 6: Verify Firewall (Instance Level)
+bash
+# Check firewalld
+sudo firewall-cmd --list-all
+
+# Allow HTTP + SSH only
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=ssh
+sudo firewall-cmd --reload
+Step 7: Test External Access
+From YOUR local machine:
+
+✅ SHOULD WORK
+bash
+curl http://YOUR-PUBLIC-IP          # Returns Apache HTML
+ssh -i my-key.pem ec2-user@IP       # SSH login
+❌ SHOULD FAIL
+bash
+nc -zv YOUR-IP 443     # Connection refused
+nc -zv YOUR-IP 8080    # Connection refused
+telnet YOUR-IP 25      # Connection refused
+Step 8: Nmap Verification
+bash
+# Scan from local machine
+nmap -p 22,80,443,8080 YOUR-PUBLIC-IP
+Expected Output:
+
+text
+PORT    STATE SERVICE
+22/tcp  open  ssh      ✅ ALLOWED
+80/tcp  open  http     ✅ ALLOWED
+443/tcp closed https   ❌ BLOCKED
+8080/tcp closed 8080   ❌ BLOCKED
+Step 9: Security Group Final Check
+AWS Console → EC2 → Security Groups:
+
+text
+Inbound Rules:
+✓ HTTP (80) 0.0.0.0/0
+✓ SSH  (22) 0.0.0.0/0
+✗ NO other rules!
+Complete Command Reference
+bash
+# Instance Setup
+sudo yum install httpd -y
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+# Firewall
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=ssh
+sudo firewall-cmd --reload
+
+# Test
+curl localhost
+sudo systemctl status httpd
+Security Status Table
+Port	Service	Security Group	Instance Firewall	Status
+22	SSH	✅ Open	✅ Open	ACCESSIBLE
+80	HTTP	✅ Open	✅ Open	ACCESSIBLE
+443	HTTPS	❌ Closed	❌ Closed	BLOCKED
+3389	RDP	❌ Closed	❌ Closed	BLOCKED
+All Others	-	❌ Closed	❌ Closed	BLOCKED
