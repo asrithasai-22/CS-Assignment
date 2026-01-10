@@ -1,0 +1,58 @@
+Linux User Accounts & File Permissions
+Create 2 users and secure file access - only one user can read/write.
+
+Create Users
+bash
+# Create users
+sudo useradd person1
+sudo useradd person2
+
+# Set passwords
+sudo passwd person1    # Enter: person1
+sudo passwd person2    # Enter: person2
+Create & Secure File
+bash
+# Create file
+touch secure.txt
+
+# Fix ownership (needs sudo!)
+sudo chown person1:person1 secure.txt
+
+# Set 600 permissions (owner only)
+chmod 600 secure.txt
+
+# Verify
+ls -l secure.txt
+# Output: -rw------- 1 person1 person1 secure.txt
+Test Access
+✅ Person1 (Full Access)
+bash
+su person1
+cat secure.txt        # Works
+nano secure.txt       # Works (read+write)
+exit
+❌ Person2 (No Access)
+bash
+su person2
+cat secure.txt        # Permission denied!
+exit
+Permission Breakdown
+Permission	Numeric	Meaning
+600	rw-------	Owner r/w only
+644	rw-r--r--	Owner r/w, others read
+755	rwxr-xr-x	Owner r/w/x, others r/x
+Key Commands Summary
+bash
+sudo useradd user        # Create user
+sudo passwd user         # Set password
+sudo chown user:user file # Set owner
+chmod 600 file           # Owner-only access
+ls -l                    # Check permissions
+su user                  # Switch user
+Common Errors Fixed
+text
+❌ chown person1:person1 secure.txt
+✅ sudo chown person1:person1 secure.txt
+
+❌ chowm 600 secure.txt  
+✅ chmod 600 secure.txt
