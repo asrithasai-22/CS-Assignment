@@ -1,0 +1,60 @@
+Disable SSH Root Login (Linux)
+Secure your server - prevent direct root SSH login.
+
+Step 1: Edit SSH Config
+bash
+sudo nano /etc/ssh/sshd_config
+Find & change:
+
+text
+#PermitRootLogin yes
+PermitRootLogin no
+Save: Ctrl+O, Enter, Ctrl+X
+
+Step 2: Restart SSH Service
+bash
+# Ubuntu/Debian
+sudo systemctl restart ssh
+
+# CentOS/RHEL
+sudo systemctl restart sshd
+Step 3: Verify Changes
+bash
+# Check service status
+sudo systemctl status ssh
+
+# Confirm config
+sudo sshd -T | grep permitrootlogin
+# Output: permitrootlogin no
+Step 4: Test Root Lockout
+bash
+# From another machine
+ssh root@your_server_ip
+# Expected: Permission denied (publickey)/Access denied!
+Quick Commands
+bash
+sudo nano /etc/ssh/sshd_config           # Edit config
+# Change: PermitRootLogin no
+
+sudo systemctl restart ssh              # Restart service
+sudo sshd -T | grep permitrootlogin     # Verify: "no"
+ssh root@server_ip                      # Test: Denied!
+
+Status Check
+Command	Expected Output
+systemctl status ssh	          active (running)
+sshd -T | grep permitrootlogin	permitrootlogin no
+ssh root@ip	                    Permission denied
+
+Security Benefits:
+✅ Prevents root brute-force attacks
+✅ Forces sudo usage (logged)
+✅ Uses regular user + sudo
+
+Troubleshooting
+text
+❌ "sshd: unrecognized service"
+✅ Use: sudo systemctl restart sshd (RHEL/CentOS)
+
+❌ Config changes not applied
+✅ Restart SSH + verify with sshd -T
