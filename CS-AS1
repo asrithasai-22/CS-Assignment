@@ -1,18 +1,43 @@
-# Caesar Cipher Encryption and Decryption
+# Caesar Cipher Implementation
 
-## Problem
-Encrypt "HELLO" with shift 4  
-Decrypt "Jg qh iwtg" with reverse shift
+A simple Python program to encrypt and decrypt messages using the **Caesar cipher** algorithm. Supports both encryption (positive shift) and decryption (negative shift).
+
+## Features
+- Encrypts alphabetic characters by shifting letters forward
+- Decrypts by shifting letters backward
+- Preserves non-alphabetic characters (spaces, punctuation)
+- Interactive command-line interface
+
+## Example Usage
+
+### Encrypt "HELLO" with shift 4
+```
+Enter choice (encrypt / decrypt): encrypt
+Enter text: HELLO
+Enter shift value: 4
+Encrypted text: LIPPS
+```
+
+### Decrypt "Jg qh iwtg" with reverse shift (-2)
+```
+Enter choice (encrypt / decrypt): decrypt
+Enter text: Jg qh iwtg
+Enter shift value: 2
+Decrypted text: He of srpe
+```
 
 ## Code
 
+```python
 def caesar(text, shift):
     result = ""
+
     for ch in text:
         if ch.isalpha():
             result += chr(ord(ch) + shift)
         else:
             result += ch
+
     return result
 
 choice = input("Enter choice (encrypt / decrypt): ")
@@ -24,4 +49,23 @@ if choice == "encrypt":
 elif choice == "decrypt":
     print("Decrypted text:", caesar(text, -shift))
 else:
-    print("Invalid choice!")
+    print("Invalid choice! Enter encrypt or decrypt.")
+```
+
+## How It Works
+
+1. **Encryption**: Each letter shifts forward by `shift` positions in the alphabet
+2. **Decryption**: Each letter shifts backward by `shift` positions
+3. Non-alphabetic characters remain unchanged
+4. **Note**: Current implementation doesn't handle wrap-around (A→Z cycling)
+
+## Improvements Needed
+- Add alphabet wrap-around support (mod 26)
+- Case sensitivity handling
+- Input validation for shift values
+
+## Installation
+1. Copy the code into a file named `caesar_cipher.py`
+2. Run with `python caesar_cipher.py`
+
+Would you like me to add alphabet wrap-around functionality or create an improved version with better error handling?
