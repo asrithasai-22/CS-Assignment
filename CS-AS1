@@ -1,34 +1,30 @@
-# Caesar Cipher Implementation
+Caesar Cipher Implementation
+A simple Python program to encrypt and decrypt messages using the Caesar cipher algorithm. Supports both encryption (positive shift) and decryption (negative shift).
 
-A simple Python program to encrypt and decrypt messages using the **Caesar cipher** algorithm. Supports both encryption (positive shift) and decryption (negative shift).
+Features
+Encrypts alphabetic characters by shifting letters forward
 
-## Features
-- Encrypts alphabetic characters by shifting letters forward
-- Decrypts by shifting letters backward
-- Preserves non-alphabetic characters (spaces, punctuation)
-- Interactive command-line interface
+Decrypts by shifting letters backward
 
-## Example Usage
+Preserves non-alphabetic characters (spaces, punctuation)
 
-### Encrypt "HELLO" with shift 4
-```
+Interactive command-line interface
+
+Example Usage
+Encrypt "HELLO" with shift 4
+text
 Enter choice (encrypt / decrypt): encrypt
 Enter text: HELLO
 Enter shift value: 4
 Encrypted text: LIPPS
-```
-
-### Decrypt "Jg qh iwtg" with reverse shift (-2)
-```
+Decrypt "Jg qh iwtg" with reverse shift (-2)
+text
 Enter choice (encrypt / decrypt): decrypt
 Enter text: Jg qh iwtg
 Enter shift value: 2
 Decrypted text: He of srpe
-```
-
-## Code
-
-```python
+Code
+python
 def caesar(text, shift):
     result = ""
 
@@ -50,22 +46,23 @@ elif choice == "decrypt":
     print("Decrypted text:", caesar(text, -shift))
 else:
     print("Invalid choice! Enter encrypt or decrypt.")
-```
+How It Works
+Encryption: Each letter shifts forward by shift positions in the alphabet
 
-## How It Works
+Decryption: Each letter shifts backward by shift positions
 
-1. **Encryption**: Each letter shifts forward by `shift` positions in the alphabet
-2. **Decryption**: Each letter shifts backward by `shift` positions
-3. Non-alphabetic characters remain unchanged
-4. **Note**: Current implementation doesn't handle wrap-around (A→Z cycling)
+Non-alphabetic characters remain unchanged
 
-## Improvements Needed
-- Add alphabet wrap-around support (mod 26)
-- Case sensitivity handling
-- Input validation for shift values
+Note: Current implementation doesn't handle wrap-around (A→Z cycling)
 
-## Installation
-1. Copy the code into a file named `caesar_cipher.py`
-2. Run with `python caesar_cipher.py`
+Improvements Needed
+Add alphabet wrap-around support (mod 26)
 
-Would you like me to add alphabet wrap-around functionality or create an improved version with better error handling?
+Case sensitivity handling
+
+Input validation for shift values
+
+Installation
+Copy the code into a file named caesar_cipher.py
+
+Run with python caesar_cipher.py
