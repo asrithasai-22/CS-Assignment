@@ -1,0 +1,76 @@
+Linux Security Breach Simulation & Audit
+Simulate malicious script and track activity with Linux auditd.
+
+Create Malicious Script
+bash
+nano breach.sh
+Script content:
+
+bash
+#!/bin/bash
+echo "Security breach simulation started" >> /tmp/breach.log
+touch /tmp/secret_data.txt
+echo "User data compromised" >> /tmp/secret_data.txt
+mkdir /tmp/hidden_folder
+Setup & Execute
+bash
+# Make executable
+chmod +x breach.sh
+
+# Install auditd
+sudo apt update
+sudo apt install auditd -y
+
+# Start audit service
+sudo systemctl start auditd
+
+# Monitor /tmp directory (write,append,read,attr)
+sudo auditctl -w /tmp -p war -k breach_monitor
+
+# Run breach!
+./breach.sh
+Audit Logs Analysis
+bash
+# Search breach events
+sudo ausearch -k breach_monitor
+
+# File activity report
+sudo aureport -f
+Verify Breach Results
+bash
+ls /tmp
+# breach.log  secret_data.txt  hidden_folder
+
+cat /tmp/secret_data.txt
+# User data compromised
+Expected Audit Output
+text
+# ausearch shows:
+type=SYSCALL msg=audit(...): arch=c000003e syscall=210 success=yes ...
+name=/tmp/secret_data.txt key="breach_monitor"
+Commands Summary
+bash
+# 1. Create breach
+nano breach.sh && chmod +x breach.sh
+
+# 2. Audit setup
+sudo apt install auditd -y
+sudo systemctl start auditd
+sudo auditctl -w /tmp -p war -k breach_monitor
+
+# 3. Execute & track
+./breach.sh
+sudo ausearch -k breach_monitor
+
+# 4. Evidence
+ls /tmp && cat /tmp/secret_data.txt
+Files Created by Breach
+File/Folder	Purpose	Evidence
+/tmp/breach.log	Log entry	Breach timestamp
+/tmp/secret_data.txt	Stolen data	"User data compromised"
+/tmp/hidden_folder	Persistence	Hidden directory
+Cleanup
+bash
+sudo auditctl -W /tmp -k breach_monitor  # Remove watch
+rm -rf /tmp/breach.* /tmp/hidden_folder
+sudo systemctl stop auditd
