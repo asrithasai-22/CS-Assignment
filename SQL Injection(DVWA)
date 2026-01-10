@@ -1,0 +1,92 @@
+DVWA SQL Injection Lab Setup
+
+Prerequisites & Services
+bash
+# Start services
+sudo service apache2 start
+sudo service mysql start
+
+# Check status
+sudo service apache2 status
+sudo service mysql status
+Install Dependencies
+bash
+sudo apt update
+sudo apt install apache2 mariadb-server php php-mysqli php-gd git -y
+sudo apt install php-mysql -y
+Setup DVWA
+bash
+# Create web directory
+sudo mkdir -p /var/www/html
+sudo chown -R www-data:www-data /var/www/html
+sudo chmod -R 755 /var/www
+
+# Clone DVWA
+cd /var/www/html
+sudo git clone https://github.com/digininja/DVWA.git dvwa
+
+# Fix permissions
+sudo chown -R www-data:www-data /var/www/html/dvwa
+sudo chmod -R 755 /var/www/html/dvwa
+sudo chmod -R 777 /var/www/html/dvwa  # For setup
+Database Setup
+sql
+sudo mysql
+CREATE DATABASE dvwa;
+CREATE USER 'dvwa'@'localhost' IDENTIFIED BY 'p@ssw0rd';
+GRANT ALL PRIVILEGES ON dvwa.* TO 'dvwa'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+Configure DVWA
+bash
+cd /var/www/html/dvwa/config
+sudo cp config.inc.php.dist config.inc.php
+sudo nano config.inc.php
+Edit these lines:
+
+php
+$_DVWA['db_server']   = '127.0.0.1';
+$_DVWA['db_database'] = 'dvwa';
+$_DVWA['db_user']     = 'dvwa';
+$_DVWA['db_password'] = 'p@ssw0rd';
+bash
+sudo a2enmod rewrite
+sudo systemctl restart apache2 mysql
+First Time Setup
+Firefox: http://localhost/dvwa/setup.php
+
+Click "Create / Reset Database"
+
+Login: admin / password
+
+DVWA Security → low
+
+SQL Injection Attack (Low Security)
+Normal Query
+text
+User ID: 1          → Returns: First name + Surname
+SQL Injection
+text
+User ID: 1' OR '1'='1
+Result: Returns ALL users from database!
+
+Restart for Next Session
+bash
+sudo service apache2 start
+sudo service mysql start
+# Open Firefox: http://localhost/dvwa
+Key Commands Summary
+bash
+# Services
+sudo systemctl restart apache2 mysql
+
+# Permissions
+sudo chown -R www-data:www-data /var/www/html/dvwa
+sudo chmod -R 777 /var/www/html/dvwa
+
+# Access
+http://localhost/dvwa
+Attack Flow
+text
+1 → Normal user lookup
+1' OR '1'='1 → Bypasses login, dumps ALL users!
