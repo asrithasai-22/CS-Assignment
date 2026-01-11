@@ -1,7 +1,4 @@
-# 🔐 **Cybersecurity Labs Collection**
-
-**Complete hands-on labs** covering **cryptography, Linux security, web vulnerabilities, network analysis, cloud security, and more**.
-
+#  **Cybersecurity Assignment**
 
 ## 1. **Caesar Cipher**
 
